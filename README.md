@@ -50,20 +50,39 @@ python scripts/sanity_check.py
 
 ## Getting the data
 
+The paper itself doesn't give download instructions — it only cites the
+original dataset papers (Arevalo et al. for MM-IMDb, Wang et al. for UPMC
+Food-101, Kiela et al. for Hateful Memes). Verified current sources:
+
+- **MM-IMDb**: dataset homepage http://lisi1.unal.edu.co/mmimdb/, source
+  release https://github.com/johnarevalo/gmu-mmimdb, files mirrored on
+  Internet Archive (https://archive.org/details/mmimdb). Get the raw
+  `mmimdb.tar.gz` (~8.1GB) — not the `multimodal_imdb.hdf5` "Fuel" format
+  (~15GB), which uses a different, precomputed-feature layout this codebase
+  doesn't read.
+- **UPMC Food-101**: e.g. https://www.kaggle.com/datasets/gianmarco96/upmcfood101
+  (90,704 image-text pairs, 101 classes, pre-split 70/30 train/test).
+- **Hateful Memes**: official access requires agreeing to Meta's license at
+  https://hatefulmemeschallenge.com/ (also mirrored, license terms still
+  apply, on HuggingFace/Kaggle).
+
 You mentioned the dataset download itself isn't urgent since training will
 happen on a remote (SSH) machine — that's fine, nothing else here depends on
 it being present locally.
 
-MM-IMDb (Arevalo et al., 2017) is distributed at
-http://lisi1.unal.edu.co/mmimdb/. Extract it so you have:
+Extract MM-IMDb's `mmimdb.tar.gz` so you have:
 
 ```
 data/mmimdb/dataset/<id>.json   # {"plot": [...], "genres": [...], ...}
 data/mmimdb/dataset/<id>.jpeg
-data/mmimdb/split.json          # {"train": [...], "dev": [...], "test": [...]}
 ```
 
-If your copy doesn't ship a `split.json`, generate an 80/10/10 split:
+**Note:** the raw release does not ship a train/dev/test split file (the
+official `gmu-mmimdb` repo computes one on the fly via stratified sampling
+in `make_dataset.py`). This codebase instead generates a plain random
+80/10/10 split for simplicity — good enough to validate the method, but not
+identical to any split reported in a specific paper, so don't expect exact
+numeric agreement with a particular published table. Generate it with:
 
 ```bash
 python scripts/prepare_mmimdb.py --root data/mmimdb --build_split

@@ -74,8 +74,11 @@ class MMIMDbDataset(Dataset):
         if missing_type == MISSING_TEXT:
             text = " "  # placeholder; masked out downstream by the model
         else:
-            plot = meta.get("plot", [""])
-            text = (plot[0] if plot else "") or " "
+            plot = meta.get("plot", [])
+            # Matches the official gmu-mmimdb preprocessing convention of
+            # picking the single longest plot summary when several exist.
+            text = max(plot, key=len) if plot else ""
+            text = text or " "
 
         if missing_type == MISSING_IMAGE:
             image = Image.new("RGB", (self.image_size, self.image_size), color=(0, 0, 0))
