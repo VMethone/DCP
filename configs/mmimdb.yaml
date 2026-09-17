@@ -1,0 +1,31 @@
+data:
+  root: data/mmimdb
+  scenario: missing_both   # missing_both | missing_text | missing_image
+  missing_rate: 0.7
+  max_text_len: 77
+  image_size: 224
+  seed: 0
+
+model:
+  clip_name: openai/clip-vit-base-patch16
+  num_classes: 23
+  multi_label: true
+  prompt_len_correlated: 12
+  prompt_len_dynamic: 12
+  prompt_len_common: 12
+  common_dim: 128
+  depth_J: 6
+  reduction: 16
+
+train:
+  batch_size: 4
+  epochs: 20
+  lr: 0.01
+  weight_decay: 0.02
+  warmup_ratio: 0.1
+  num_workers: 4
+  output_dir: outputs/mmimdb
+  log_every: 50
+  eval_every_epoch: 1
+  seed: 42
+  grad_clip: 1.0
